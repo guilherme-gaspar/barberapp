@@ -1,4 +1,4 @@
-package com.example.barberapp
+package com.example.barberapp.register
 
 import android.app.Activity
 import android.content.Intent
@@ -8,6 +8,10 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import com.example.barberapp.login.LoginActivity
+import com.example.barberapp.R
+import com.example.barberapp.messages.LatestMessagesActivity
+import com.example.barberapp.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -27,15 +31,10 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_register)
 
         button_register.setOnClickListener {
-            performRegister();
-
-            textView_have_account_register.setOnClickListener {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-            }
+            performRegister()
         }
 
-        textView_have_account_register.setOnClickListener {
+        textView_already_have_account.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
@@ -110,12 +109,14 @@ class RegisterActivity : AppCompatActivity() {
         ref.setValue(user)
             .addOnSuccessListener {
                 Log.d(TAG, "Finally we saved the user to Firebase Database")
+
+                val intent = Intent(this, LatestMessagesActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
             .addOnFailureListener {
                 Log.d(TAG, "Failed to set value to database: ${it.message}")
             }
     }
 }
-
-class User(val uid: String, val username: String, val profileImageUrl: String)
 
